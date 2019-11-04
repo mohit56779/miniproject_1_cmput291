@@ -11,6 +11,25 @@ class reg_agent:
         
     def getId(self):
         return self.user_id
+ 
+    def renew_reg(self,Num_Reg):
+
+        conn = sqlite3.connect(self.db_name)
+        c = conn.cursor()
+        c.execute(''' SELECT regno,expiry FROM regstrations WHERE regno= ? COLLATE NOCASE; ''',(Num_reg))
+   
+        result = c.fetchall() 
+        Actual_date = date.today()
+    
+        assert result != None, "Wrong Registration Number"
+            
+        if C_expiry <= Actual_date: 
+            cursor.execute("UPDATE registrations SET expiry=date('now', '+1 year') WHERE Num_reg=?", (reg_no,))
+            conn.commit()
+        
+        elif C_expiry > Actual_date()::
+            cursor.execute("UPDATE registrations SET expiry=date(expiry, '+1 year') WHERE Num_reg=?", (reg_no,))
+            conn.commit() 
 
     def register_birth(self,fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname):
         
