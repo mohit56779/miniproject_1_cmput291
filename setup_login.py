@@ -2,7 +2,7 @@ import sqlite3
 import reg_agent
 import traffic_officer
 import getpass
-DB_NAME = './assignment3.db'
+DB_NAME = input("Enter db filename: ")
 conn = sqlite3.connect(DB_NAME)
 c = conn.cursor()
 
@@ -174,9 +174,26 @@ def officer_actions(uid):
 
 # agent options 
 def regBirth(uid):
+  agent = reg_agent.reg_agent(uid, DB_NAME)
+  fname = input("first name: ")
+  lname = input("last name: ")
+  gender = input("gender: ")
+  bdate = input("birth date: ")
+  bplace = input("birth place: ")
+  mother_fname = input("mother first name: ")
+  mother_lname = input("mother last name: ")
+  father_fname = input("father first name: ")
+  father_lname = input("father last name: ")
+  agent.register_birth(fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname)
   return True
 
 def regMar(uid):
+  agent = reg_agent.reg_agent(uid, DB_NAME)
+  p1_fname = input("Person 1 first name: ")
+  p1_lname = input("Person 1 last name: ")
+  p2_fname = input("Person 2 first name: ")
+  p2_lname = input("Person 2 last name: ")
+  agent.register_marriage(p1_fname,p1_lname, p2_fname, p2_lname)
   return True
 
 def renewVR(uid):
@@ -186,6 +203,8 @@ def procBill(uid):
   return True
 
 def procPay(uid):
+  agent = reg_agent.reg_agent(uid, DB_NAME)
+  agent.process_payment(self, tno,amount)
   return True
 
 def getDrAb(uid):
