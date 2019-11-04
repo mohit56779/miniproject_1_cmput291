@@ -1,5 +1,6 @@
 import sqlite3
 import reg_agent
+import traffic_officer
 conn = sqlite3.connect('./assignment3.db')
 c = conn.cursor()
 
@@ -114,7 +115,7 @@ create table users (
 #    test_renew_reg()
 #    test_process_payment()    
 #   test_register_birth()   
-    test_process_bill_sale()
+#    test_process_bill_sale()
     
 
 

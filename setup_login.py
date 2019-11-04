@@ -8,10 +8,10 @@ c = conn.cursor()
 
 def main():
     global conn,c
-
     display_login()
 
     
+# prompt user for username and password and check if they are in database
 def display_login():
     global conn,c
     while True:
@@ -25,6 +25,7 @@ def display_login():
       else:
         print("The username and password you entered were not found. Please try again.")
     
+# Welcome user and move them to appropriate options based on position
 def log_on(rows):
   print(f"Welcome {rows[0][3]} {rows[0][4]}.")
   uid = rows[0][0]
@@ -33,6 +34,7 @@ def log_on(rows):
   elif rows[0][2] == 'o':
     officer_actions(uid)
 
+# list possible agent actions and prompt user to choose one
 def agent_actions(uid):
   loggedIn = True
   validSelect = {"regbirth": regBirth, "regmar": regMar, "renewvr": renewVR,
@@ -50,6 +52,7 @@ def agent_actions(uid):
     func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
     loggedIn = func(uid)
   
+# list possible officer actions and prompt user to choose one
 def officer_actions(uid):
   loggedIn = True
   validSelect = {"issuetick": issueTick, "findcarown": findCarOwn, "logout": logOut}
@@ -63,6 +66,7 @@ def officer_actions(uid):
     loggedIn = func(uid)
 
 # agent options 
+# register a birth
 def regBirth(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
   fname = input("first name: ")
@@ -77,6 +81,7 @@ def regBirth(uid):
   agent.register_birth(fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname)
   return True
 
+# register marriage
 def regMar(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
   p1_fname = input("Person 1 first name: ")
@@ -86,12 +91,14 @@ def regMar(uid):
   agent.register_marriage(p1_fname,p1_lname, p2_fname, p2_lname)
   return True
 
+# renew vehicle registration
 def renewVR(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
   num_Reg = input("Registration number: ")
   agent.renew_reg(num_Reg)
   return True
 
+# process bill of sale
 def procBill(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
   vin = input("Vehicle Id number: ")
@@ -103,6 +110,7 @@ def procBill(uid):
   agent.process_bill_sale(vin,curr_owner_fname,curr_owner_lname,new_owner_fname,new_owner_lname,plate_no)
   return True
 
+# process payment
 def procPay(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
   tno = input("Ticket number: ")
@@ -110,16 +118,22 @@ def procPay(uid):
   agent.process_payment(tno,amount)
   return True
 
+# get a drivers abstract
 def getDrAb(uid):
+  # incomplete
   return True
 
 # officer options
+# issue a ticket
 def issueTick(uid):
   officer = traffic_officer.traffic_officer(uid, DB_NAME)
+  regno = input("Vehicle registration number: ")
+  officer.issue_ticket(regno)
   return True
 
+# find a cars owner 
 def findCarOwn(uid):
-  officer = traffic_officer.traffic_officer(uid, DB_NAME)
+  # incomplete
   return True
 
 # both can use
