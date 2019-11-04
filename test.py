@@ -112,11 +112,13 @@ create table users (
   foreign key (fname,lname) references persons
 );   ''')
     
-    test_process_bill_sale()
+    
+#    test_register_birth()   
+#    test_process_bill_sale()
     
 #    test_process_payment()
 
-#    test_reg_marriage()
+    test_reg_marriage()
 
     
 def test_reg_marriage():
@@ -130,17 +132,23 @@ def test_reg_marriage():
     
     conn.commit()
     
-    agent = reg_agent.reg_agent('00000000')
+    agent = reg_agent.reg_agent('00000000','./assignment3.db')
     
-    agent.register_marriage('zen','jackson', 'john', 'wong')
+    # test_1
+   # agent.register_marriage('sam','san', 'john', 'wong')
+    
+    # test_2
+    agent.register_marriage('tom','low','jam','high')
     
     conn.commit()
-    c.execute(''' INSERT into marriages values (?,?,?,'sam','san', 'john', 'wong') ''', (None, None, None))
-    conn.commit()
+   # c.execute(''' INSERT into marriages values (?,?,?,'sam','san', 'john', 'wong') ''', (None, None, None))
+   # conn.commit()
+   
     c.execute(''' SELECT * FROM marriages''')
     
     
     rows = c.fetchall()
+    print(rows)
     
     c.execute(''' SELECT * FROM persons''')
     
@@ -158,7 +166,7 @@ def test_process_payment():
     
     conn.commit()
     
-    agent = reg_agent.reg_agent('00000000')
+    agent = reg_agent.reg_agent('00000000','./assignment3.db')
 
     agent.process_payment(2,500)
 
@@ -186,7 +194,7 @@ def test_process_bill_sale():
     c.execute(''' SELECT * FROM registrations WHERE vin = ?''', ('0000',))
     print(c.fetchall())
     
-    agent = reg_agent.reg_agent('00000000')
+    agent = reg_agent.reg_agent('00000000','./assignment3.db')
  
     # agent.process_bill_sale('0000',"R","R","Aria","Smith",1000)   
     agent.process_bill_sale('0000',"Ron","Rin","Aria","Smith",1000)
@@ -195,6 +203,39 @@ def test_process_bill_sale():
     
     c.execute(''' SELECT * FROM registrations WHERE vin = ?''', ('0000',))
     print(c.fetchall())
+    
+def test_register_birth():
+    global conn,c
+    
+    c.execute(''' INSERT into persons values('sam','san',?,?,?,?)''',( None, None, None,None))
+    c.execute(''' INSERT into persons values('john','wong',?,?,?,?)''',( None, None, None,None)) 
+    
+    c.execute(''' INSERT into users values (? ,'00000000','a','sam','san','tokyo')''', ('00000000',))
+    
+    conn.commit()
+    
+    agent = reg_agent.reg_agent('00000000','./assignment3.db')
+    
+    agent.register_birth('mal','wal','M','1925-07-13','tokyo','w','a','b','c')
+    
+  #  agent.register_birth('mal','wal','M','1925-07-13','tokyo','john','wong','sam','san')
+    
+    c.execute(''' SELECT * FROM persons''')
+    print(c.fetchall())
+    
+    conn.commit()
+    
+    c.execute(''' SELECT * FROM births''')
+    print(c.fetchall())
+    
+    conn.commit()
+    
+    conn.close()
+        
+        
+        
+        
+        
     
 
    

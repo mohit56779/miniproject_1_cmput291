@@ -2,15 +2,16 @@ import sqlite3
 from datetime import date
 
 class reg_agent:
-    def __init__(self,uid):
+    def __init__(self,uid,db_name):
         self.marriage_regno = 0
         self.registration_regno = 0
         self.user_id = uid
         self.birth_regno = 0
+        self.db_name = db_name
         
     def register_birth(self,fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname):
         
-        conn = sqlite3.connect('./assignment3.db')
+        conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         
         c.execute('''SELECT * FROM persons WHERE fname = ? AND lname = ?; ''',(father_fname,father_lname))
@@ -21,7 +22,7 @@ class reg_agent:
             name_matches = False
             all_given = False
             
-            while name_matches == False and all_given == False:
+            while name_matches == False or all_given == False:
                 inp_1 = input("The child's Father does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_1 = inp_1.split(',')
                 
@@ -35,9 +36,9 @@ class reg_agent:
                 else:
                     print("That's not the name of father you tried to register for the child. Please try again.")
             
-            for index in range(len(inp_1)-1):
+            for index in range(len(inp_1)):
                 if  inp_1[index] =="":
-                    inp_1[index] == None
+                    inp_1[index] = None
                     
             c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?)''', (inp_1[0],inp_1[1],inp_1[2],inp_1[3],inp_1[4],inp_1[5]))
             
@@ -46,15 +47,13 @@ class reg_agent:
         c.execute('''SELECT address,phone FROM persons WHERE fname = ? AND lname = ?; ''',(mother_fname,mother_lname))
         
         result = c.fetchall()
-        
-        mother_address = result[0][0]
-        mother_phone = result[0][1]
+
         
         if result == []:
             name_matches = False
             all_given = False
             
-            while name_matches == False and all_given == False:
+            while name_matches == False or all_given == False:
                 inp_1 = input("The child's Mother does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_1 = inp_1.split(',')
                 
@@ -63,21 +62,27 @@ class reg_agent:
                 else:
                     print("Not all values required were inputed, Please try again")
                     
-                if inp_1[0] == father_fname and inp_1[1] == father_lname:
+                if inp_1[0] == mother_fname and inp_1[1] == mother_lname:
                     name_matches = True
                 else:
                     print("That's not the name of Mother you tried to register for the the child. Please try again.")
             
-            for index in range(len(inp_1)-1):
+            for index in range(len(inp_1)):
                 if  inp_1[index] =="":
-                    inp_1[index] == None
+                    inp_1[index] = None
                     
             c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?)''', (inp_1[0],inp_1[1],inp_1[2],inp_1[3],inp_1[4],inp_1[5]))
             
-        conn.commit()        
+            mother_address = inp_1[4]
+            mother_phone = inp_1[5]              
+            
+            conn.commit()  
+        else:
+            mother_address = result[0][0]
+            mother_phone = result[0][1]            
             
         c.execute(''' SELECT city FROM users WHERE uid = ?;  ''', (self.user_id,))
-        
+     
         city = c.fetchall()[0][0]
       
         
@@ -87,12 +92,16 @@ class reg_agent:
         
         conn.commit()
         
+        c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?)''', (fname,lname,bdate,bplace,mother_address,mother_phone))
+        
+        conn.commit()
+        
         self.birth_regno += 1
         
         conn.close()         
         
     def register_marriage(self,p1_fname,p1_lname, p2_fname, p2_lname):
-        conn = sqlite3.connect('./assignment3.db')
+        conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         c.execute(''' SELECT * FROM persons WHERE fname = ? AND lname = ?; ''',(p1_fname,p1_lname))
         
@@ -103,7 +112,7 @@ class reg_agent:
             partner_name_matches = False
             all_given = False
             
-            while partner_name_matches == False and all_given == False:
+            while partner_name_matches == False or all_given == False:
                 inp_1 = input("The first Partner does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_1 = inp_1.split(',')
                 
@@ -117,9 +126,9 @@ class reg_agent:
                 else:
                     print("That's not the name of first partner you tried to register. Please try again.")
             
-            for index in range(len(inp_1)-1):
+            for index in range(len(inp_1)):
                 if  inp_1[index] =="":
-                    inp_1[index] == None
+                    inp_1[index] = None
                     
             c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?)''', (inp_1[0],inp_1[1],inp_1[2],inp_1[3],inp_1[4],inp_1[5]))
             
@@ -133,26 +142,26 @@ class reg_agent:
             partner_name_matches = False
             all_given = False
             
-            while partner_name_matches == False and all_given == False:
-                inp_2 = input("The first Partner does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
-                inp_2 = inp_1.split(',')
+            while partner_name_matches == False or all_given == False:
+                inp_2 = input("The second Partner does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
+                inp_2 = inp_2.split(',')
                 
                 if len(inp_2) == 6:
                     all_given = True
                 else:
                     print("Not all values required were inputed, Please try again")
                     
-                if inp_2[0] == p1_fname and inp_2[1] == p1_lname:
+                if inp_2[0] == p2_fname and inp_2[1] == p2_lname:
                     partner_name_matches = True
                 else:
-                    print("That's not the name of first partner you tried to register. Please try again.")
+                    print("That's not the name of second partner you tried to register. Please try again.")
                     
             
-            for index in range(len(inp_2)-1):
+            for index in range(len(inp_2)):
                 if  inp_2[index] =="":
-                    inp_2[index] == None
+                    inp_2[index] = None
                     
-            c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?);''', (inp_2[0],inp_2[1],inp2[2],inp_2[3],inp_2[4],inp2[5]))
+            c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?);''', (inp_2[0],inp_2[1],inp_2[2],inp_2[3],inp_2[4],inp_2[5]))
             
         conn.commit()
         
@@ -173,7 +182,7 @@ class reg_agent:
         
     def process_payment(self, tno,amount):
         
-        conn = sqlite3.connect('./assignment3.db')
+        conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         
         c.execute(''' SELECT * FROM tickets WHERE tno = ?;''', (tno,))
@@ -212,7 +221,7 @@ class reg_agent:
         
     def process_bill_sale(self,vin,curr_owner_fname,curr_owner_lname,new_owner_fname,new_owner_lname,plate_no):
         
-        conn = sqlite3.connect('./assignment3.db')
+        conn = sqlite3.connect(self.db_name)
         c = conn.cursor()       
         
         c.execute(''' SELECT fname,lname,regno FROM registrations WHERE vin = ? AND julianday(expiry) >= julianday(CURRENT_DATE); ''', (vin,))
