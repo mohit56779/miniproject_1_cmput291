@@ -15,7 +15,7 @@ Hi guys, Just putting some info here so you guys can work with the methods I wro
 I have finished following methods in this class till now, Information for each is below -
 
 (1) register_marriages (Test function included in the test file)
-(2) process_payment ( Test function included in the test file)
+(2) process_payment ( Test function included in the test file) - NOTE: Make sure that the inputs to this funtion is something that can be casted to int
 (3) process_bill_sale ( Test functin included in the test file)
 (4) register_births ( Test function included now)
 
