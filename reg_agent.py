@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import date
+from datetime import datetime
 
 class reg_agent:
     def __init__(self,uid,db_name):
@@ -9,28 +10,6 @@ class reg_agent:
         self.birth_regno = 0
         self.db_name = db_name
         
-    def getId(self):
-        return self.user_id
- 
-    def renew_reg(self,Num_Reg):
-
-        conn = sqlite3.connect(self.db_name)
-        c = conn.cursor()
-        c.execute(''' SELECT regno,expiry FROM regstrations WHERE regno= ? COLLATE NOCASE; ''',(Num_reg))
-   
-        result = c.fetchall() 
-        Actual_date = date.today()
-    
-        assert result != None, "Wrong Registration Number"
-            
-        if C_expiry <= Actual_date: 
-            cursor.execute("UPDATE registrations SET expiry=date('now', '+1 year') WHERE Num_reg=?", (reg_no,))
-            conn.commit()
-        
-        elif C_expiry > Actual_date()::
-            cursor.execute("UPDATE registrations SET expiry=date(expiry, '+1 year') WHERE Num_reg=?", (reg_no,))
-            conn.commit() 
-
     def register_birth(self,fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname):
         
         conn = sqlite3.connect(self.db_name)
@@ -245,7 +224,13 @@ class reg_agent:
         
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()       
+        c.execute(''' SELECT * FROM persons WHERE fname = ? COLLATE NOCASE and lname = ? COLLATE NOCASE ''', (new_owner_fname, new_owner_lname))
         
+        result = c.fetchall()
+        
+        assert result != [], "New owner does not exist"
+        
+        conn.commit()
         c.execute(''' SELECT fname,lname,regno FROM registrations WHERE vin = ? COLLATE NOCASE AND julianday(expiry) >= julianday(CURRENT_DATE); ''', (vin,))
         
        
@@ -262,7 +247,6 @@ class reg_agent:
         
         c.execute(''' UPDATE registrations SET expiry = ? WHERE regno = ? ''', (today,result_regno))     
         
-        #expiry = today.replace(year=today.year + 1)
         
         c.execute(''' INSERT into registrations values (?,?,date('now','+1 year'),?,?,?,?);''',(self.registration_regno, today,plate_no,vin,new_owner_fname,new_owner_lname))
         
@@ -271,4 +255,55 @@ class reg_agent:
         conn.commit()
         conn.close()
         
+    def renew_reg(self,Num_Reg):
+    
+        conn = sqlite3.connect(self.db_name)
+        c = conn.cursor()
+        c.execute(''' SELECT expiry FROM registrations WHERE regno= ? COLLATE NOCASE; ''',(Num_Reg,))
+       
+        result = c.fetchall() 
+        Actual_date = date.today()
         
+        assert result != None, "Wrong Registration Number"
+  
+        C_expiry = result[0][0]
+    
+        C_expiry = C_expiry.split('-')
+        C_expiry_datetime = datetime(int(C_expiry[0]),int(C_expiry[1]),int(C_expiry[2]))
+        
+        Actual_date = str(Actual_date).split('-')
+        Actual_date_datetime = datetime(int(Actual_date[0]),int(Actual_date[1]),int(Actual_date[2]))
+      
+        if C_expiry_datetime <= Actual_date_datetime: 
+            c.execute("UPDATE registrations SET expiry=date('now', '+1 year') WHERE regno=?", (Num_Reg,))
+            conn.commit()
+            
+        elif C_expiry_datetime > Actual_date_datetime:
+            c.execute("UPDATE registrations SET expiry=date(expiry, '+1 year') WHERE regno=?", (Num_Reg,))
+            conn.commit()   
+            
+
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+
+    
+        
+        
+
+
+        
+
+
+
+

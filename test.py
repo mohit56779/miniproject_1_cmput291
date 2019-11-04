@@ -1,6 +1,5 @@
 import sqlite3
 import reg_agent
-import traffic_officer
 conn = sqlite3.connect('./assignment3.db')
 c = conn.cursor()
 
@@ -112,10 +111,10 @@ create table users (
   primary key(uid),
   foreign key (fname,lname) references persons
 );   ''')
-    
+#    test_renew_reg()
 #    test_process_payment()    
-    test_register_birth()   
-#    test_process_bill_sale()
+#   test_register_birth()   
+    test_process_bill_sale()
     
 
 
@@ -198,7 +197,7 @@ def test_process_bill_sale():
     agent = reg_agent.reg_agent('00000000','./assignment3.db')
  
     # agent.process_bill_sale('0000',"R","R","Aria","Smith",1000)   
-    agent.process_bill_sale('0000',"Ron","Rin","Aria","Smith",1000)
+    agent.process_bill_sale('0000',"Ron","Rin","Ari","Smith",1000)
     
     conn.commit()
     
@@ -232,7 +231,36 @@ def test_register_birth():
     conn.commit()
     
     conn.close()
+
+def test_renew_reg():
+    
+    global conn,c
+    c.execute(''' INSERT into persons values('Ron','Rin',?,?,?,?)''',( None, None, None,None))
         
+    c.execute(''' INSERT into vehicles values(?,?,?,?,?);''',('0000',None,None,None,None))
+    c.execute(''' INSERT into vehicles values(?,?,?,?,?);''',('1111',None,None,None,None))
+    
+    c.execute('''INSERT into registrations values (?, date('now'), date('now', '-1 day'),?,?,?,?);''',(98,99, '0000',"Ron","Rin"))
+    c.execute('''INSERT into registrations values (?, date('now'), date('now'),?,?,?,?);''',(99,99, '0000',"Ron","Rin"))
+    c.execute('''INSERT into registrations values (?,date('now'), date('now', '+10 day'),?,?,?,?);''',(100,99, '1111',"Ron","Rin")) 
+    conn.commit()
+    agent = reg_agent.reg_agent('00000000','./assignment3.db')
+    
+    c.execute(''' SELECT * FROM registrations''')
+    print(c.fetchall())    
+    conn.commit()
+    
+    agent.renew_reg(98)
+    agent.renew_reg(99)
+    agent.renew_reg(100)
+    
+    c.execute(''' SELECT * FROM registrations''')
+    print(c.fetchall())   
+    
+    
+    
+    
+    
         
         
         
