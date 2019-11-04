@@ -253,25 +253,3 @@ class reg_agent:
         conn.close()
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    
-
-    
-        
-        
-
-
-        
-
-
-
-
