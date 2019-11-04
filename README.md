@@ -1,6 +1,12 @@
 # miniproject_1_cmput291
 
 MOHIT COMMENTS FOR COLLABORATION -
+Note: Things to remember while writing the executes for sqlite -
+(1) use tuples to pass the vars in the execute method for sql injection attacks
+(2) use 'COLLATE NOCASE' for case insensitivity after every matching performed e.g -
+
+c.execute('''SELECT * FROM persons WHERE fname = ? COLLATE NOCASE AND lname = ? COLLATE NOCASE; ''',(father_fname,father_lname))
+
 
 Hi guys, Just putting some info here so you guys can work with the methods I wrote easily -
 
@@ -26,7 +32,7 @@ The User inputs will need to be tested for correctness in the main function.
 ~ The bugs currently that need to be fixed in this class are following -
 
 HIGH PRIORITY -
-(1) The SQlite codes are not case insenstive as per requirements
+(1) SOLVED - The SQlite codes are not case insenstive as per requirements - CODE UPDATED WITH COLLATE NO CASE 
 
 LOW PRIORITY -
 
