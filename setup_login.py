@@ -15,7 +15,7 @@ def main():
 def display_login():
     global conn,c
     while True:
-      username = input("Username: ")
+      username = input("Username: ").lower()
       password = getpass.getpass("Password: ")
 
       c.execute(''' SELECT * FROM users WHERE uid=? AND pwd=?''',(username,password))
@@ -35,8 +35,8 @@ def log_on(rows):
 
 def agent_actions(uid):
   loggedIn = True
-  validSelect = {"regBirth": regBirth, "regMar": regMar, "renewVR": renewVR,
-  "procBill": procBill, "procPay": procPay, "getDrAb": getDrAb, "logOut": logOut}
+  validSelect = {"regbirth": regBirth, "regmar": regMar, "renewvr": renewVR,
+  "procbill": procBill, "procpay": procPay, "getdrab": getDrAb, "logout": logOut}
   while loggedIn:
     print("Please enter one of the following commands:")
     print("[regBirth] - register a birth")
@@ -46,19 +46,19 @@ def agent_actions(uid):
     print("[procPay] - process a payment")
     print("[getDrAb] - get a drivers abstract")
     print("[logOut] - log out of account")
-    usrSelect = input()
+    usrSelect = input().lower()
     func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
     loggedIn = func(uid)
   
 def officer_actions(uid):
   loggedIn = True
-  validSelect = {"issueTick": issueTick, "FindCarOwn": findCarOwn, "logOut": logOut}
+  validSelect = {"issuetick": issueTick, "findcarown": findCarOwn, "logout": logOut}
   while loggedIn:
     print("Please enter one of the following commands:")
     print("[issueTick] - issue a ticket")
     print("[FindCarOwn] - find a car owner")
     print("[logOut] - log out of account")
-    usrSelect = input()
+    usrSelect = input().lower()
     func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
     loggedIn = func(uid)
 
@@ -87,6 +87,9 @@ def regMar(uid):
   return True
 
 def renewVR(uid):
+  agent = reg_agent.reg_agent(uid, DB_NAME)
+  num_Reg = input("Registration number: ")
+  agent.renew_reg(num_Reg)
   return True
 
 def procBill(uid):
@@ -112,9 +115,11 @@ def getDrAb(uid):
 
 # officer options
 def issueTick(uid):
+  officer = traffic_officer.traffic_officer(uid, DB_NAME)
   return True
 
 def findCarOwn(uid):
+  officer = traffic_officer.traffic_officer(uid, DB_NAME)
   return True
 
 # both can use
