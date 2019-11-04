@@ -24,6 +24,8 @@ I have put some info about these methods in the whatsapp group. In case of error
 The User inputs will need to be tested for correctness in the main function.
 
 ~ The bugs currently that need to be fixed in this class are following -
+Very High Priority -
+(1) I have just noticed - the db name is passed using a command line argument during demo. I have hard coded this name.
 HIGH PRIORITY -
 (1) The SQlite codes are not case insenstive as per requirements
 
