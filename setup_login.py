@@ -1,6 +1,7 @@
 import sqlite3
 import reg_agent
 import traffic_officer
+import getpass
 DB_NAME = './assignment3.db'
 conn = sqlite3.connect(DB_NAME)
 c = conn.cursor()
@@ -125,7 +126,7 @@ def display_login():
     global conn,c
     while True:
       username = input("Username: ")
-      password = input("Password: ")
+      password = getpass.getpass("Password: ")
 
       c.execute(''' SELECT * FROM users WHERE uid=? AND pwd=?''',(username,password))
       rows = c.fetchall()
@@ -173,9 +174,6 @@ def officer_actions(uid):
 
 # agent options 
 def regBirth(uid):
-  # to use these functions prompt input from user and 
-  # use values to pass to actual class methods
-  print(uid)
   return True
 
 def regMar(uid):
