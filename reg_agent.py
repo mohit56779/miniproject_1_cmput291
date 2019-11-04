@@ -4,6 +4,7 @@ from datetime import date
 class reg_agent:
     def __init__(self,uid):
         self.marriage_regno = 0
+        self.registration_regno = 0
         self.user_id = uid
      
     def register_marriage(self,p1_fname,p1_lname, p2_fname, p2_lname):
@@ -124,6 +125,42 @@ class reg_agent:
         
         conn.commit()
         conn.close()
+        
+    def process_bill_sale(self,vin,curr_owner_fname,curr_owner_lname,new_owner_fname,new_owner_lname,plate_no):
+        
+        conn = sqlite3.connect('./assignment3.db')
+        c = conn.cursor()       
+        
+        c.execute(''' SELECT fname,lname,regno FROM registrations WHERE vin = ? AND julianday(expiry) >= julianday(CURRENT_DATE); ''', (vin,))
+        
+       
+        result = c.fetchall()
+        result_fname = result [0][0]
+        result_lname = result [0][1]
+        result_regno = result [0][2]
+        
+        assert result_fname == curr_owner_fname and result_lname == curr_owner_lname, "The current owner for this car in our database is different from what was mentioned"
+        
+        conn.commit()
+        
+        today = date.today()
+        
+        c.execute(''' UPDATE registrations SET expiry = ? WHERE regno = ? ''', (today,result_regno))     
+        
+        #expiry = today.replace(year=today.year + 1)
+        
+        c.execute(''' INSERT into registrations values (?,?,date('now','+1 year'),?,?,?,?);''',(self.registration_regno, today,plate_no,vin,new_owner_fname,new_owner_lname))
+        
+        self.registration_regno += 1
+        
+        conn.commit()
+        conn.close()
+        
+        
+        
+        
+        
+        
         
         
         

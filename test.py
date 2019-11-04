@@ -112,7 +112,9 @@ create table users (
   foreign key (fname,lname) references persons
 );   ''')
     
-    test_process_payment()
+    test_process_bill_sale()
+    
+#    test_process_payment()
 
 #    test_reg_marriage()
 
@@ -167,6 +169,36 @@ def test_process_payment():
     print(c.fetchall())
     
     
+def test_process_bill_sale():
+    global conn,c
+    c.execute(''' INSERT into persons values('Ron','Rin',?,?,?,?)''',( None, None, None,None))
+        
+    c.execute(''' INSERT into vehicles values(?,?,?,?,?);''',('0000',None,None,None,None))
+    c.execute(''' INSERT into vehicles values(?,?,?,?,?);''',('1111',None,None,None,None))
+    
+    c.execute('''INSERT into registrations values (?, date('now'), date('now', '-1 day'),?,?,?,?);''',(98,99, '0000',"Ron","Rin"))
+    c.execute('''INSERT into registrations values (?, date('now'), date('now'),?,?,?,?);''',(99,99, '0000',"Ron","Rin"))
+    c.execute('''INSERT into registrations values (?,date('now'), date('now', '-1 day'),?,?,?,?);''',(100,99, '1111',"Ron","Rin"))
+    
+    
+    conn.commit()
+    
+    c.execute(''' SELECT * FROM registrations WHERE vin = ?''', ('0000',))
+    print(c.fetchall())
+    
+    agent = reg_agent.reg_agent('00000000')
+ 
+    # agent.process_bill_sale('0000',"R","R","Aria","Smith",1000)   
+    agent.process_bill_sale('0000',"Ron","Rin","Aria","Smith",1000)
+    
+    conn.commit()
+    
+    c.execute(''' SELECT * FROM registrations WHERE vin = ?''', ('0000',))
+    print(c.fetchall())
+    
+
+   
+   
     
     
     
