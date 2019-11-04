@@ -1,10 +1,12 @@
 import sqlite3
 import reg_agent
+conn = sqlite3.connect('./assignment3.db')
+c = conn.cursor()
 
 def main():
-    print('hi')
-    conn = sqlite3.connect('./assignment3.db')
-    c = conn.cursor()
+    global conn,c
+    
+
     c.executescript('''drop table if exists demeritNotices;
 drop table if exists tickets;
 drop table if exists registrations;
@@ -110,6 +112,14 @@ create table users (
   foreign key (fname,lname) references persons
 );   ''')
     
+    test_process_payment()
+
+#    test_reg_marriage()
+
+    
+def test_reg_marriage():
+    global conn,c
+    
     c.execute(''' INSERT into persons values('sam','san',?,?,?,?)''',( None, None, None,None))
     c.execute(''' INSERT into persons values('john','wong',?,?,?,?)''',( None, None, None,None))
     conn.commit()
@@ -137,6 +147,28 @@ create table users (
     
     print(rows)
     
+def test_process_payment():
+    
+    global conn,c
+    c.execute(''' INSERT into vehicles values(?,?,?,?,?);''',(0,None,None,None,None))
+    c.execute(''' INSERT into registrations values(?,?,?,?,?,?,?)''',(0,None, None,None,0,None,None))
+    c.execute('''INSERT into tickets values (?,?,?,?,?);''', (2,0,1500,None, None))
+    
+    conn.commit()
+    
+    agent = reg_agent.reg_agent('00000000')
+
+    agent.process_payment(2,500)
+
   
+    
+    c.execute(''' SELECT * FROM payments''')
+    
+    print(c.fetchall())
+    
+    
+    
+    
+    
     
 main()
