@@ -24,15 +24,13 @@ I have put some info about these methods in the whatsapp group. In case of error
 The User inputs will need to be tested for correctness in the main function.
 
 ~ The bugs currently that need to be fixed in this class are following -
-Very High Priority -
-(1) I have just noticed - the db name is passed using a command line argument during demo. I have hard coded this name.
+
 HIGH PRIORITY -
 (1) The SQlite codes are not case insenstive as per requirements
 
 LOW PRIORITY -
 
-(2) In registed_marriages and register_births methods, I am not sure if "NULL" is getting inserted for the blank fields when the new person is created or an empty string is inserted. This needs to be "NULL".
-(3) For each of regno ( registration numbers), it would be good to do a validity check to make sure the regnos are really unique, I am using an instance variable and incrementing it for each method call for uniqueness. This is very low priority tho.
+(1) For each of regno ( registration numbers), it would be good to do a validity check to make sure the regnos are really unique, I am using an instance variable and incrementing it for each method call for uniqueness. This is very low priority tho.
 
 -> SQL injection attacks
 
