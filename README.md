@@ -17,7 +17,7 @@ I have finished following methods in this class till now, Information for each i
 (1) register_marriages (Test function included in the test file)
 (2) process_payment ( Test function included in the test file)
 (3) process_bill_sale ( Test functin included in the test file)
-(4) register_births ( Test function still on work)
+(4) register_births ( Test function included now)
 
 I have put some info about these methods in the whatsapp group. In case of errors specified in the method question, assertion errors are raised in call stack by the methods. 
 
