@@ -9,6 +9,9 @@ class reg_agent:
         self.birth_regno = 0
         self.db_name = db_name
         
+    def getId(self):
+        return self.user_id
+
     def register_birth(self,fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname):
         
         conn = sqlite3.connect(self.db_name)

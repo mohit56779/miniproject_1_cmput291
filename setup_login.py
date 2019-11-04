@@ -1,7 +1,8 @@
 import sqlite3
 import reg_agent
 import traffic_officer
-conn = sqlite3.connect('./assignment3.db')
+DB_NAME = './assignment3.db'
+conn = sqlite3.connect(DB_NAME)
 c = conn.cursor()
 
 def main():
@@ -135,17 +136,18 @@ def display_login():
     
 def log_on(rows):
   print(f"Welcome {rows[0][3]} {rows[0][4]}.")
+  uid = rows[0][0]
   if rows[0][2] == 'a':
-    agent_actions(rows)
+    agent_actions(uid)
   elif rows[0][2] == 'o':
-    officer_actions(rows)
+    officer_actions(uid)
 
-def agent_actions(rows):
-  loggedOut = False
+def agent_actions(uid):
+  loggedIn = True
   validSelect = {"regBirth": regBirth, "regMar": regMar, "renewVR": renewVR,
   "procBill": procBill, "procPay": procPay, "getDrAb": getDrAb, "logOut": logOut}
-  while not loggedOut:
-    print("Please enter one of the following options:")
+  while loggedIn:
+    print("Please enter one of the following commands:")
     print("[regBirth] - register a birth")
     print("[regMar] - register a marriage")
     print("[renewVR] - renew a vehicle registration")
@@ -154,52 +156,53 @@ def agent_actions(rows):
     print("[getDrAb] - get a drivers abstract")
     print("[logOut] - log out of account")
     usrSelect = input()
-    func = validSelect.get(usrSelect, lambda:"Invalid choice")
-    loggedOut = func()
+    func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
+    loggedIn = func(uid)
   
-def officer_actions(rows):
-  loggedOut = False
+def officer_actions(uid):
+  loggedIn = True
   validSelect = {"issueTick": issueTick, "FindCarOwn": findCarOwn, "logOut": logOut}
-  while not loggedOut:
-    print("Please enter one of the following options:")
+  while loggedIn:
+    print("Please enter one of the following commands:")
     print("[issueTick] - issue a ticket")
     print("[FindCarOwn] - find a car owner")
     print("[logOut] - log out of account")
     usrSelect = input()
-    func = validSelect.get(usrSelect, lambda:"Invalid choice")
-    loggedOut = func()
+    func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
+    loggedIn = func(uid)
 
 # agent options 
-def regBirth():
+def regBirth(uid):
   # to use these functions prompt input from user and 
   # use values to pass to actual class methods
-  return False
+  print(uid)
+  return True
 
-def regMar():
-  return False
+def regMar(uid):
+  return True
 
-def renewVR():
-  return False
+def renewVR(uid):
+  return True
 
-def procBill():
-  return False
+def procBill(uid):
+  return True
 
-def procPay():
-  return False
+def procPay(uid):
+  return True
 
-def getDrAb():
-  return False
+def getDrAb(uid):
+  return True
 
 # officer options
-def issueTick():
-  return False
+def issueTick(uid):
+  return True
 
-def findCarOwn():
-  return False
+def findCarOwn(uid):
+  return True
 
 # both can use
-def logOut():
-  return True
+def logOut(uid):
+  return False
 
 
 
