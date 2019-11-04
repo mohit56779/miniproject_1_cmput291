@@ -31,3 +31,17 @@ LOW PRIORITY -
 
 (2) In registed_marriages and register_births methods, I am not sure if "NULL" is getting inserted for the blank fields when the new person is created or an empty string is inserted. This needs to be "NULL".
 (3) For each of regno ( registration numbers), it would be good to do a validity check to make sure the regnos are really unique, I am using an instance variable and incrementing it for each method call for uniqueness. This is very low priority tho.
+
+-> SQL injection attacks
+
+To prevent from SQL injection attacks, Please check the wahtsapp group or the lab slides for lab class 2 python inside applications. Basically, use tuples to insert the variables instead of without them in each "execute" command. e.g -
+
+SQL injection proof execute -
+c.execute(''' SELECT id FROM users where pass = ?''', (password))
+
+DONT DO THIS -
+
+c.execute(''' SELECT id FROM users where pass = %s''', password)
+
+
+
