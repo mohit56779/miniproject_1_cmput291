@@ -1,5 +1,6 @@
 import sqlite3
 import reg_agent
+import traffic_officer
 conn = sqlite3.connect('./assignment3.db')
 c = conn.cursor()
 
