@@ -6,7 +6,91 @@ class reg_agent:
         self.marriage_regno = 0
         self.registration_regno = 0
         self.user_id = uid
-     
+        self.birth_regno = 0
+        
+    def register_birth(self,fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname):
+        
+        conn = sqlite3.connect('./assignment3.db')
+        c = conn.cursor()
+        
+        c.execute('''SELECT * FROM persons WHERE fname = ? AND lname = ?; ''',(father_fname,father_lname))
+        
+        result = c.fetchall()
+        
+        if result == []:
+            name_matches = False
+            all_given = False
+            
+            while name_matches == False and all_given == False:
+                inp_1 = input("The child's Father does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
+                inp_1 = inp_1.split(',')
+                
+                if len(inp_1) == 6:
+                    all_given = True
+                else:
+                    print("Not all values required were inputed, Please try again")
+                    
+                if inp_1[0] == father_fname and inp_1[1] == father_lname:
+                    name_matches = True
+                else:
+                    print("That's not the name of father you tried to register for the child. Please try again.")
+            
+            for index in range(len(inp_1)-1):
+                if  inp_1[index] =="":
+                    inp_1[index] == None
+                    
+            c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?)''', (inp_1[0],inp_1[1],inp_1[2],inp_1[3],inp_1[4],inp_1[5]))
+            
+        conn.commit()
+        
+        c.execute('''SELECT address,phone FROM persons WHERE fname = ? AND lname = ?; ''',(mother_fname,mother_lname))
+        
+        result = c.fetchall()
+        
+        mother_address = result[0][0]
+        mother_phone = result[0][1]
+        
+        if result == []:
+            name_matches = False
+            all_given = False
+            
+            while name_matches == False and all_given == False:
+                inp_1 = input("The child's Mother does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
+                inp_1 = inp_1.split(',')
+                
+                if len(inp_1) == 6:
+                    all_given = True
+                else:
+                    print("Not all values required were inputed, Please try again")
+                    
+                if inp_1[0] == father_fname and inp_1[1] == father_lname:
+                    name_matches = True
+                else:
+                    print("That's not the name of Mother you tried to register for the the child. Please try again.")
+            
+            for index in range(len(inp_1)-1):
+                if  inp_1[index] =="":
+                    inp_1[index] == None
+                    
+            c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?)''', (inp_1[0],inp_1[1],inp_1[2],inp_1[3],inp_1[4],inp_1[5]))
+            
+        conn.commit()        
+            
+        c.execute(''' SELECT city FROM users WHERE uid = ?;  ''', (self.user_id,))
+        
+        city = c.fetchall()[0][0]
+      
+        
+        conn.commit()
+        
+        c.execute('''INSERT INTO births VALUES (?,?,?,date('now'),?,?,?,?,?,?)''', (self.birth_regno,fname,lname,city,gender,father_fname,father_lname,mother_fname,mother_lname))
+        
+        conn.commit()
+        
+        self.birth_regno += 1
+        
+        conn.close()         
+        
     def register_marriage(self,p1_fname,p1_lname, p2_fname, p2_lname):
         conn = sqlite3.connect('./assignment3.db')
         c = conn.cursor()
@@ -29,7 +113,7 @@ class reg_agent:
                     print("Not all values required were inputed, Please try again")
                     
                 if inp_1[0] == p1_fname and inp_1[1] == p1_lname:
-                    parnet_name_matches = True
+                    partner_name_matches = True
                 else:
                     print("That's not the name of first partner you tried to register. Please try again.")
             
@@ -59,7 +143,7 @@ class reg_agent:
                     print("Not all values required were inputed, Please try again")
                     
                 if inp_2[0] == p1_fname and inp_2[1] == p1_lname:
-                    parnet_name_matches = True
+                    partner_name_matches = True
                 else:
                     print("That's not the name of first partner you tried to register. Please try again.")
                     
@@ -72,7 +156,7 @@ class reg_agent:
             
         conn.commit()
         
-        result = c.execute(''' SELECT city FROM users WHERE uid = ?;  ''', (self.user_id,))
+        c.execute(''' SELECT city FROM users WHERE uid = ?;  ''', (self.user_id,))
         
         city = c.fetchall()[0][0]
       
