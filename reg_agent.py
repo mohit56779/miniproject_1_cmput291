@@ -14,7 +14,7 @@ class reg_agent:
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         
-        c.execute('''SELECT * FROM persons WHERE fname = ? AND lname = ?; ''',(father_fname,father_lname))
+        c.execute('''SELECT * FROM persons WHERE fname = ? COLLATE NOCASE AND lname = ? COLLATE NOCASE; ''',(father_fname,father_lname))
         
         result = c.fetchall()
         
@@ -44,7 +44,7 @@ class reg_agent:
             
         conn.commit()
         
-        c.execute('''SELECT address,phone FROM persons WHERE fname = ? AND lname = ?; ''',(mother_fname,mother_lname))
+        c.execute('''SELECT address,phone FROM persons WHERE fname = ? COLLATE NOCASE AND lname = ? COLLATE NOCASE; ''',(mother_fname,mother_lname))
         
         result = c.fetchall()
 
@@ -81,7 +81,7 @@ class reg_agent:
             mother_address = result[0][0]
             mother_phone = result[0][1]            
             
-        c.execute(''' SELECT city FROM users WHERE uid = ?;  ''', (self.user_id,))
+        c.execute(''' SELECT city FROM users WHERE uid = ? COLLATE NOCASE;  ''', (self.user_id,))
      
         city = c.fetchall()[0][0]
       
@@ -103,7 +103,7 @@ class reg_agent:
     def register_marriage(self,p1_fname,p1_lname, p2_fname, p2_lname):
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
-        c.execute(''' SELECT * FROM persons WHERE fname = ? AND lname = ?; ''',(p1_fname,p1_lname))
+        c.execute(''' SELECT * FROM persons WHERE fname = ? COLLATE NOCASE AND lname = ? COLLATE NOCASE; ''',(p1_fname,p1_lname))
         
         result_p1 = c.fetchall()
        
@@ -134,7 +134,7 @@ class reg_agent:
             
         conn.commit()
         
-        c.execute(''' SELECT * FROM persons WHERE fname = ? and lname = ? ;''',(p2_fname,p2_lname))
+        c.execute(''' SELECT * FROM persons WHERE fname = ? COLLATE NOCASE and lname = ? COLLATE NOCASE ;''',(p2_fname,p2_lname))
         result_p2 = c.fetchall()
        
         if result_p2 == []:
@@ -165,7 +165,7 @@ class reg_agent:
             
         conn.commit()
         
-        c.execute(''' SELECT city FROM users WHERE uid = ?;  ''', (self.user_id,))
+        c.execute(''' SELECT city FROM users WHERE uid = ? COLLATE NOCASE;  ''', (self.user_id,))
         
         city = c.fetchall()[0][0]
       
@@ -181,11 +181,11 @@ class reg_agent:
         conn.close()
         
     def process_payment(self, tno,amount):
-        
+        int(tno)
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         
-        c.execute(''' SELECT * FROM tickets WHERE tno = ?;''', (tno,))
+        c.execute(''' SELECT * FROM tickets WHERE tno = ? ;''', (tno,))
         
         result = c.fetchone()
        
@@ -193,7 +193,7 @@ class reg_agent:
         
         conn.commit()
         
-        c.execute(''' SELECT fine FROM tickets WHERE tno = ?;''', (tno,))
+        c.execute(''' SELECT fine FROM tickets WHERE tno = ? ;''', (tno,))
         
         fine = c.fetchone()[0]
         
@@ -208,7 +208,7 @@ class reg_agent:
         for item in result:
             total_paid += item[0]
             
-        new_total = total_paid + amount
+        new_total = total_paid + int(amount)
         
         assert new_total <= fine, "The total payment for this ticket exceeds the fine amount"
         
@@ -224,7 +224,7 @@ class reg_agent:
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()       
         
-        c.execute(''' SELECT fname,lname,regno FROM registrations WHERE vin = ? AND julianday(expiry) >= julianday(CURRENT_DATE); ''', (vin,))
+        c.execute(''' SELECT fname,lname,regno FROM registrations WHERE vin = ? COLLATE NOCASE AND julianday(expiry) >= julianday(CURRENT_DATE); ''', (vin,))
         
        
         result = c.fetchall()

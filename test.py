@@ -112,13 +112,13 @@ create table users (
   foreign key (fname,lname) references persons
 );   ''')
     
-    
-#    test_register_birth()   
+#    test_process_payment()    
+    test_register_birth()   
 #    test_process_bill_sale()
     
-#    test_process_payment()
 
-    test_reg_marriage()
+
+#    test_reg_marriage()
 
     
 def test_reg_marriage():
@@ -168,7 +168,7 @@ def test_process_payment():
     
     agent = reg_agent.reg_agent('00000000','./assignment3.db')
 
-    agent.process_payment(2,500)
+    agent.process_payment("",500)
 
   
     
@@ -216,9 +216,9 @@ def test_register_birth():
     
     agent = reg_agent.reg_agent('00000000','./assignment3.db')
     
-    agent.register_birth('mal','wal','M','1925-07-13','tokyo','w','a','b','c')
+   # agent.register_birth('mal','wal','M','1925-07-13','tokyo','w','a','b','c')
     
-  #  agent.register_birth('mal','wal','M','1925-07-13','tokyo','john','wong','sam','san')
+    agent.register_birth('mal','wal','M','1925-07-13','tokyo','john','wong','sAm','sAn')
     
     c.execute(''' SELECT * FROM persons''')
     print(c.fetchall())
