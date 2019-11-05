@@ -2,7 +2,7 @@ import sqlite3
 import reg_agent
 import traffic_officer
 import getpass
-DB_NAME = input("Enter db filename: ")
+DB_NAME = raw_input("Enter db filename: ")
 conn = sqlite3.connect(DB_NAME)
 c = conn.cursor()
 
@@ -15,7 +15,7 @@ def main():
 def display_login():
     global conn,c
     while True:
-      username = input("Username: ").lower()
+      username = raw_input("Username: ").lower()
       password = getpass.getpass("Password: ")
 
       c.execute(''' SELECT * FROM users WHERE uid=? AND pwd=?''',(username,password))
@@ -27,7 +27,7 @@ def display_login():
     
 # Welcome user and move them to appropriate options based on position
 def log_on(rows):
-  print(f"Welcome {rows[0][3]} {rows[0][4]}.")
+  print("Welcome.")
   uid = rows[0][0]
   if rows[0][2] == 'a':
     agent_actions(uid)
@@ -48,7 +48,7 @@ def agent_actions(uid):
     print("[procPay] - process a payment")
     print("[getDrAb] - get a drivers abstract")
     print("[logOut] - log out of account")
-    usrSelect = input().lower()
+    usrSelect = raw_input().lower()
     func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
     loggedIn = func(uid)
   
@@ -61,7 +61,7 @@ def officer_actions(uid):
     print("[issueTick] - issue a ticket")
     print("[FindCarOwn] - find a car owner")
     print("[logOut] - log out of account")
-    usrSelect = input().lower()
+    usrSelect = raw_input().lower()
     func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
     loggedIn = func(uid)
 
@@ -133,7 +133,13 @@ def issueTick(uid):
 
 # find a cars owner 
 def findCarOwn(uid):
-  # incomplete
+  officer = traffic_officer.traffic_officer(uid, DB_NAME)
+  make = raw_input("Make of car: ")
+  model = raw_input("Model of car: ")
+  year = input("Year of car: ")
+  color = raw_input("Color of car: ")
+  plate = raw_input("Plate of car: ")
+  officer.find_car_owner(make, model, year, color, plate)
   return True
 
 # both can use
