@@ -17,7 +17,6 @@ def display_login():
     while True:
       username = raw_input("Username: ").lower()
       password = getpass.getpass("Password: ")
-
       c.execute(''' SELECT * FROM users WHERE uid=? AND pwd=?''',(username,password))
       rows = c.fetchall()
       if rows:
@@ -37,6 +36,7 @@ def log_on(rows):
 # list possible agent actions and prompt user to choose one
 def agent_actions(uid):
   loggedIn = True
+  # library of all of the agents possible actions
   validSelect = {"regbirth": regBirth, "regmar": regMar, "renewvr": renewVR,
   "procbill": procBill, "procpay": procPay, "getdrab": getDrAb, "logout": logOut}
   while loggedIn:
@@ -55,6 +55,7 @@ def agent_actions(uid):
 # list possible officer actions and prompt user to choose one
 def officer_actions(uid):
   loggedIn = True
+  # library of all of the officers possible actions
   validSelect = {"issuetick": issueTick, "findcarown": findCarOwn, "logout": logOut}
   while loggedIn:
     print("Please enter one of the following commands:")

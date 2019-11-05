@@ -29,6 +29,7 @@ class traffic_officer:
         ticket_number = c.fetchone()[0]
         c.execute(''' INSERT INTO tickets VALUES(?,?,?,?,?); ''',(ticket_number,regno, fine, violation, vdate))
         conn.commit()
+        conn.close()
 
 
     # method for finding a car owner under the officers name
@@ -36,6 +37,4 @@ class traffic_officer:
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         #incomplete
-
-
-        return 0
+        conn.close()
