@@ -292,29 +292,3 @@ class reg_agent:
         elif C_expiry_datetime > Actual_date_datetime:
             c.execute("UPDATE registrations SET expiry=date(expiry, '+1 year') WHERE regno=?", (Num_Reg,))
             conn.commit()   
-            
-
-    
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    
-
-    
-        
-        
-
-
-        
-
-
-
-
