@@ -7,19 +7,20 @@ class reg_agent:
         self.user_id = uid
         self.db_name = db_name
         
+    # registers a new birth
     def register_birth(self,fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname):
         
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         
+        # check if the father is in persons table
         c.execute('''SELECT * FROM persons WHERE fname = ? COLLATE NOCASE AND lname = ? COLLATE NOCASE; ''',(father_fname,father_lname))
-        
         result = c.fetchall()
-        
         if result == []:
             name_matches = False
             all_given = False
             
+            # while name has not been properly inputed keep asking user for new person info
             while name_matches == False or all_given == False:
                 inp_1 = raw_input("The child's Father does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_1 = inp_1.split(',')
@@ -42,15 +43,16 @@ class reg_agent:
             
         conn.commit()
         
+        # check if the mother is a person in the persons table
         c.execute('''SELECT address,phone FROM persons WHERE fname = ? COLLATE NOCASE AND lname = ? COLLATE NOCASE; ''',(mother_fname,mother_lname))
         
         result = c.fetchall()
 
-        
         if result == []:
             name_matches = False
             all_given = False
             
+            # while name has not been properly inputed keep asking user for new person info
             while name_matches == False or all_given == False:
                 inp_1 = raw_input("The child's Mother does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_1 = inp_1.split(',')
@@ -83,7 +85,6 @@ class reg_agent:
      
         city = c.fetchall()[0][0]
       
-        
         conn.commit()
 
         c.execute(''' SELECT count(*) from births; ''')
@@ -96,12 +97,13 @@ class reg_agent:
         c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?)''', (fname,lname,bdate,bplace,mother_address,mother_phone))
         
         conn.commit()
-        
         conn.close()         
         
+    # register a new marriage between two people
     def register_marriage(self,p1_fname,p1_lname, p2_fname, p2_lname):
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
+        # find person 1 in persons table
         c.execute(''' SELECT * FROM persons WHERE fname = ? COLLATE NOCASE AND lname = ? COLLATE NOCASE; ''',(p1_fname,p1_lname))
         
         result_p1 = c.fetchall()
@@ -133,6 +135,7 @@ class reg_agent:
             
         conn.commit()
         
+        # find person 2 in persons table
         c.execute(''' SELECT * FROM persons WHERE fname = ? COLLATE NOCASE and lname = ? COLLATE NOCASE ;''',(p2_fname,p2_lname))
         result_p2 = c.fetchall()
        
@@ -179,11 +182,13 @@ class reg_agent:
         
         conn.close()
         
+    # process a payment on a ticket
     def process_payment(self, tno,amount):
-        int(tno)
+        int(tno) # ensure tno is int
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         
+        # find ticket in tickets table
         c.execute(''' SELECT * FROM tickets WHERE tno = ? ;''', (tno,))
         
         result = c.fetchone()
@@ -222,6 +227,7 @@ class reg_agent:
         conn.commit()
         conn.close()
         
+    # process the bill of sale from one person to another
     def process_bill_sale(self,vin,curr_owner_fname,curr_owner_lname,new_owner_fname,new_owner_lname,plate_no):
         
         conn = sqlite3.connect(self.db_name)
@@ -239,6 +245,7 @@ class reg_agent:
         
        
         result = c.fetchall()
+        # was experiencing bugs here that could not be resolved in time
         if result == []:
             print("Something was not right try again.")
             return 0
@@ -264,6 +271,7 @@ class reg_agent:
         conn.commit()
         conn.close()
         
+    # renew registration for a given registration number
     def renew_reg(self,Num_Reg):
     
         conn = sqlite3.connect(self.db_name)
