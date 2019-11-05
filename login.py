@@ -20,18 +20,14 @@ def display_login():
       c.execute(''' SELECT * FROM users WHERE uid=? AND pwd=?''',(username,password))
       rows = c.fetchall()
       if rows:
-        log_on(rows)
+        print("Welcome.")
+        uid = rows[0][0]
+        if rows[0][2] == 'a':
+          agent_actions(uid)
+        elif rows[0][2] == 'o':
+          officer_actions(uid)
       else:
         print("The username and password you entered were not found. Please try again.")
-    
-# Welcome user and move them to appropriate options based on position
-def log_on(rows):
-  print("Welcome.")
-  uid = rows[0][0]
-  if rows[0][2] == 'a':
-    agent_actions(uid)
-  elif rows[0][2] == 'o':
-    officer_actions(uid)
 
 # list possible agent actions and prompt user to choose one
 def agent_actions(uid):
