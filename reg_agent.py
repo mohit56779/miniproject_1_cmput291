@@ -239,7 +239,9 @@ class reg_agent:
         
        
         result = c.fetchall()
-        print(result)
+        if result == []:
+            print("Something was not right try again.")
+            return 0
         result_fname = result [0][0]
         result_lname = result [0][1]
         result_regno = result [0][2]
