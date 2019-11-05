@@ -1,7 +1,8 @@
 import sqlite3
 import reg_agent
 import traffic_officer
-conn = sqlite3.connect('./assignment3.db')
+DB_NAME = './assignment3.db'
+conn = sqlite3.connect(DB_NAME)
 c = conn.cursor()
 
 def main():
@@ -111,17 +112,43 @@ create table users (
   city		char(15),
   primary key(uid),
   foreign key (fname,lname) references persons
-);   ''')
-#    test_renew_reg()
-#    test_process_payment()    
-#   test_register_birth()   
-#    test_process_bill_sale()
-    
+);   
+INSERT INTO persons VALUES('agent', 'One', '09-09-0909', 'Edmonton', 'Edmonton', '7807807800');
+INSERT INTO persons VALUES('officer', 'One','09-09-0909','Edmonton', 'Edmonton', '7807807800');
+INSERT INTO users VALUES('officer1', 'password1', 'o', 'officer', 'One', 'Edmonton');
+INSERT INTO users VALUES('agent1', 'password1', 'a', 'agent', 'One', 'Edmonton'); ''')
 
-
+#    test_issue_tick()
 #    test_reg_marriage()
+#    test_process_payment()  
+    test_process_bill_sale()
+#    test_register_birth()   
+#    test_renew_reg()
 
-    
+def test_issue_tick():
+    global conn,c
+    c.execute(''' INSERT into vehicles VALUES('vin1', 'make1', 'model1', 2019, 'color1'); ''')
+    c.execute(''' INSERT into vehicles VALUES('vin2', 'make2', 'model2', 2019, 'color2'); ''')
+    c.execute(''' INSERT into registrations VALUES(10,'09-09-2019','09-10-2019','plateno1','vin1','agent','One'); ''')
+    c.execute(''' INSERT into registrations VALUES(11,'09-09-2019','09-10-2019','plateno2','vin2','agent','One'); ''')
+
+    conn.commit()
+
+    officer = traffic_officer.traffic_officer('officer1', DB_NAME)
+
+    print("Testing reg_no = 10")
+    officer.issue_ticket(10)
+    print("Testing reg_no = 11")
+    officer.issue_ticket(11)
+
+    c.execute(''' SELECT * FROM tickets; ''')
+    rows = c.fetchall()
+    print(rows)
+
+
+
+
+
 def test_reg_marriage():
     global conn,c
     
@@ -133,7 +160,7 @@ def test_reg_marriage():
     
     conn.commit()
     
-    agent = reg_agent.reg_agent('00000000','./assignment3.db')
+    agent = reg_agent.reg_agent('00000000',DB_NAME)
     
     # test_1
    # agent.register_marriage('sam','san', 'john', 'wong')
@@ -167,7 +194,7 @@ def test_process_payment():
     
     conn.commit()
     
-    agent = reg_agent.reg_agent('00000000','./assignment3.db')
+    agent = reg_agent.reg_agent('00000000',DB_NAME)
 
     agent.process_payment("",500)
 
@@ -181,7 +208,8 @@ def test_process_payment():
 def test_process_bill_sale():
     global conn,c
     c.execute(''' INSERT into persons values('Ron','Rin',?,?,?,?)''',( None, None, None,None))
-        
+    c.execute(''' INSERT into persons values('Rin','Ron',?,?,?,?)''',( None, None, None,None))
+       
     c.execute(''' INSERT into vehicles values(?,?,?,?,?);''',('0000',None,None,None,None))
     c.execute(''' INSERT into vehicles values(?,?,?,?,?);''',('1111',None,None,None,None))
     
@@ -195,10 +223,10 @@ def test_process_bill_sale():
     c.execute(''' SELECT * FROM registrations WHERE vin = ?''', ('0000',))
     print(c.fetchall())
     
-    agent = reg_agent.reg_agent('00000000','./assignment3.db')
+    agent = reg_agent.reg_agent('00000000',DB_NAME)
  
     # agent.process_bill_sale('0000',"R","R","Aria","Smith",1000)   
-    agent.process_bill_sale('0000',"Ron","Rin","Ari","Smith",1000)
+    agent.process_bill_sale('0000',"Ron","Rin","rin","ron",1000)
     
     conn.commit()
     
@@ -215,7 +243,7 @@ def test_register_birth():
     
     conn.commit()
     
-    agent = reg_agent.reg_agent('00000000','./assignment3.db')
+    agent = reg_agent.reg_agent('00000000',DB_NAME)
     
    # agent.register_birth('mal','wal','M','1925-07-13','tokyo','w','a','b','c')
     
@@ -245,33 +273,20 @@ def test_renew_reg():
     c.execute('''INSERT into registrations values (?, date('now'), date('now'),?,?,?,?);''',(99,99, '0000',"Ron","Rin"))
     c.execute('''INSERT into registrations values (?,date('now'), date('now', '+10 day'),?,?,?,?);''',(100,99, '1111',"Ron","Rin")) 
     conn.commit()
-    agent = reg_agent.reg_agent('00000000','./assignment3.db')
+    agent = reg_agent.reg_agent('00000000',DB_NAME)
     
     c.execute(''' SELECT * FROM registrations''')
     print(c.fetchall())    
     conn.commit()
-    
+    print("renew registration for reg_no = 98")
     agent.renew_reg(98)
+    print("renew registration for reg_no = 99")
     agent.renew_reg(99)
+    print("renew registration for reg_no = 100")
     agent.renew_reg(100)
     
     c.execute(''' SELECT * FROM registrations''')
     print(c.fetchall())   
     
-    
-    
-    
-    
-        
-        
-        
-        
-    
 
-   
-   
-    
-    
-    
-    
 main()
