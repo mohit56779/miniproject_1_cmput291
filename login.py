@@ -59,7 +59,7 @@ def officer_actions(uid):
   while loggedIn:
     print("Please enter one of the following commands:")
     print("[issueTick] - issue a ticket")
-    print("[FindCarOwn] - find a car owner")
+    print("[findCarOwn] - find a car owner")
     print("[logOut] - log out of account")
     usrSelect = raw_input().lower()
     func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
