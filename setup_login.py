@@ -2,7 +2,7 @@ import sqlite3
 import reg_agent
 import traffic_officer
 import getpass
-DB_NAME = input("Enter db filename: ")
+DB_NAME = raw_input("Enter db filename: ")
 conn = sqlite3.connect(DB_NAME)
 c = conn.cursor()
 
@@ -15,7 +15,7 @@ def main():
 def display_login():
     global conn,c
     while True:
-      username = input("Username: ").lower()
+      username = raw_input("Username: ").lower()
       password = getpass.getpass("Password: ")
 
       c.execute(''' SELECT * FROM users WHERE uid=? AND pwd=?''',(username,password))
@@ -27,7 +27,7 @@ def display_login():
     
 # Welcome user and move them to appropriate options based on position
 def log_on(rows):
-  print(f"Welcome {rows[0][3]} {rows[0][4]}.")
+  print("Welcome.")
   uid = rows[0][0]
   if rows[0][2] == 'a':
     agent_actions(uid)
@@ -48,7 +48,7 @@ def agent_actions(uid):
     print("[procPay] - process a payment")
     print("[getDrAb] - get a drivers abstract")
     print("[logOut] - log out of account")
-    usrSelect = input().lower()
+    usrSelect = raw_input().lower()
     func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
     loggedIn = func(uid)
   
@@ -61,7 +61,7 @@ def officer_actions(uid):
     print("[issueTick] - issue a ticket")
     print("[FindCarOwn] - find a car owner")
     print("[logOut] - log out of account")
-    usrSelect = input().lower()
+    usrSelect = raw_input().lower()
     func = validSelect.get(usrSelect, lambda uid:"Invalid choice")
     loggedIn = func(uid)
 
@@ -69,52 +69,52 @@ def officer_actions(uid):
 # register a birth
 def regBirth(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
-  fname = input("first name: ")
-  lname = input("last name: ")
-  gender = input("gender: ")
-  bdate = input("birth date: ")
-  bplace = input("birth place: ")
-  mother_fname = input("mother first name: ")
-  mother_lname = input("mother last name: ")
-  father_fname = input("father first name: ")
-  father_lname = input("father last name: ")
+  fname = raw_input("first name: ")
+  lname = raw_input("last name: ")
+  gender = raw_input("gender: ")
+  bdate = raw_input("birth date: ")
+  bplace = raw_input("birth place: ")
+  mother_fname = raw_input("mother first name: ")
+  mother_lname = raw_input("mother last name: ")
+  father_fname = raw_input("father first name: ")
+  father_lname = raw_input("father last name: ")
   agent.register_birth(fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname)
   return True
 
 # register marriage
 def regMar(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
-  p1_fname = input("Person 1 first name: ")
-  p1_lname = input("Person 1 last name: ")
-  p2_fname = input("Person 2 first name: ")
-  p2_lname = input("Person 2 last name: ")
+  p1_fname = raw_input("Person 1 first name: ")
+  p1_lname = raw_input("Person 1 last name: ")
+  p2_fname = raw_input("Person 2 first name: ")
+  p2_lname = raw_input("Person 2 last name: ")
   agent.register_marriage(p1_fname,p1_lname, p2_fname, p2_lname)
   return True
 
 # renew vehicle registration
 def renewVR(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
-  num_Reg = input("Registration number: ")
+  num_Reg = raw_input("Registration number: ")
   agent.renew_reg(num_Reg)
   return True
 
 # process bill of sale
 def procBill(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
-  vin = input("Vehicle Id number: ")
-  curr_owner_fname = input("Current Owner First Name: ")
-  curr_owner_lname = input("Current Owner Last Name: ")
-  new_owner_fname = input("New Owner First Name: ")
-  new_owner_lname = input("New Owner Last Name: ")
-  plate_no = input("Plate Number: ")
+  vin = raw_input("Vehicle Id number: ")
+  curr_owner_fname = raw_input("Current Owner First Name: ")
+  curr_owner_lname = raw_input("Current Owner Last Name: ")
+  new_owner_fname = raw_input("New Owner First Name: ")
+  new_owner_lname = raw_input("New Owner Last Name: ")
+  plate_no = raw_input("Plate Number: ")
   agent.process_bill_sale(vin,curr_owner_fname,curr_owner_lname,new_owner_fname,new_owner_lname,plate_no)
   return True
 
 # process payment
 def procPay(uid):
   agent = reg_agent.reg_agent(uid, DB_NAME)
-  tno = input("Ticket number: ")
-  amount = input("Ticket amount: ")
+  tno = raw_input("Ticket number: ")
+  amount = raw_input("Ticket amount: ")
   agent.process_payment(tno,amount)
   return True
 
@@ -127,7 +127,7 @@ def getDrAb(uid):
 # issue a ticket
 def issueTick(uid):
   officer = traffic_officer.traffic_officer(uid, DB_NAME)
-  regno = input("Vehicle registration number: ")
+  regno = raw_input("Vehicle registration number: ")
   officer.issue_ticket(regno)
   return True
 
