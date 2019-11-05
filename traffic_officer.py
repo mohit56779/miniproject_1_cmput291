@@ -3,7 +3,6 @@ from datetime import date
 
 class traffic_officer:
     def __init__(self,uid,db_name):
-        self.ticket_tno = 0
         self.user_id = uid
         self.db_name = db_name
         
@@ -12,23 +11,31 @@ class traffic_officer:
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         c.execute(''' SELECT fname, lname, regno, make, model, year, color
-        FROM registrations JOIN vehicles USING(vin) 
-        WHERE regno=? COLLATE NOCASE; ''',(regno,))
+        FROM registrations r, vehicles v 
+        WHERE r.vin = v.vin AND regno=? COLLATE NOCASE; ''',(regno,))
         rows = c.fetchall()
         # ticket the registration
-        if rows:
-            print(rows)
-            vdate = input("violation date: ")
-            violation = input("Brief violation description: ")
-            fine = input("Fine amount:")
-            c.execute(''' INSERT INTO tickets VALUES(?,?,?,?,?); ''',(self.ticket_tno,regno, fine, violation, vdate))
-            self.ticket_tno += 1
-        else:
+        if rows == []:
             print("The registration number was not found")
+            return 0
+        print(rows)
+        vdate = raw_input("violation date: ")
+        if not vdate:
+            vdate = date.today()
+        violation = raw_input("Brief violation description: ")
+        fine = raw_input("Fine amount:")
+        # get unique ticket number based on number of tickets already in the database
+        c.execute(''' SELECT count(*) from tickets; ''')
+        ticket_number = c.fetchone()[0]
+        c.execute(''' INSERT INTO tickets VALUES(?,?,?,?,?); ''',(ticket_number,regno, fine, violation, vdate))
+        conn.commit()
+
 
     # method for finding a car owner under the officers name
     def find_car_owner(self,make, model, year, color, plate):
         conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
+        #incomplete
+
 
         return 0

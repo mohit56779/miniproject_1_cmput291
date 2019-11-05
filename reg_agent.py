@@ -4,10 +4,7 @@ from datetime import datetime
 
 class reg_agent:
     def __init__(self,uid,db_name):
-        self.marriage_regno = 0
-        self.registration_regno = 0
         self.user_id = uid
-        self.birth_regno = 0
         self.db_name = db_name
         
     def register_birth(self,fname,lname,gender,bdate,bplace,mother_fname,mother_lname,father_fname,father_lname):
@@ -24,7 +21,7 @@ class reg_agent:
             all_given = False
             
             while name_matches == False or all_given == False:
-                inp_1 = input("The child's Father does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
+                inp_1 = raw_input("The child's Father does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_1 = inp_1.split(',')
                 
                 if len(inp_1) == 6:
@@ -55,7 +52,7 @@ class reg_agent:
             all_given = False
             
             while name_matches == False or all_given == False:
-                inp_1 = input("The child's Mother does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
+                inp_1 = raw_input("The child's Mother does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_1 = inp_1.split(',')
                 
                 if len(inp_1) == 6:
@@ -88,16 +85,17 @@ class reg_agent:
       
         
         conn.commit()
+
+        c.execute(''' SELECT count(*) from births; ''')
+        birth_regno = c.fetchone()[0]
         
-        c.execute('''INSERT INTO births VALUES (?,?,?,date('now'),?,?,?,?,?,?)''', (self.birth_regno,fname,lname,city,gender,father_fname,father_lname,mother_fname,mother_lname))
+        c.execute('''INSERT INTO births VALUES (?,?,?,date('now'),?,?,?,?,?,?)''', (birth_regno,fname,lname,city,gender,father_fname,father_lname,mother_fname,mother_lname))
         
         conn.commit()
         
         c.execute('''INSERT INTO persons VALUES (?,?,?,?,?,?)''', (fname,lname,bdate,bplace,mother_address,mother_phone))
         
         conn.commit()
-        
-        self.birth_regno += 1
         
         conn.close()         
         
@@ -114,7 +112,7 @@ class reg_agent:
             all_given = False
             
             while partner_name_matches == False or all_given == False:
-                inp_1 = input("The first Partner does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
+                inp_1 = raw_input("The first Partner does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_1 = inp_1.split(',')
                 
                 if len(inp_1) == 6:
@@ -144,7 +142,7 @@ class reg_agent:
             all_given = False
             
             while partner_name_matches == False or all_given == False:
-                inp_2 = input("The second Partner does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
+                inp_2 = raw_input("The second Partner does not exist in our database. Please put this person's first name, last name, birth date, birth place, address and phone seperated by a comma. The fields except first and last names can be left empty if not known. e.g - 'Sam, Sanny,,tokyo,,+111000333: ")
                 inp_2 = inp_2.split(',')
                 
                 if len(inp_2) == 6:
@@ -172,12 +170,12 @@ class reg_agent:
       
         
         conn.commit()
+        c.execute(''' SELECT count(*) from marriages; ''')
+        marriage_regno = c.fetchone()[0]
         
-        c.execute('''INSERT INTO marriages VALUES (?,?,?,?,?,?,?)''', (self.marriage_regno,date.today(),city,p1_fname,p1_lname, p2_fname, p2_lname))
+        c.execute('''INSERT INTO marriages VALUES (?,?,?,?,?,?,?)''', (marriage_regno,date.today(),city,p1_fname,p1_lname, p2_fname, p2_lname))
         
         conn.commit()
-        
-        self.marriage_regno += 1
         
         conn.close()
         
@@ -190,7 +188,9 @@ class reg_agent:
         
         result = c.fetchone()
        
-        assert result!= None, "Ticket number does not exist"
+        if result == None:
+            print("Ticket number does not exist")
+            return 0
         
         conn.commit()
         
@@ -211,7 +211,9 @@ class reg_agent:
             
         new_total = total_paid + int(amount)
         
-        assert new_total <= fine, "The total payment for this ticket exceeds the fine amount"
+        if not new_total <= fine:
+            print("The total payment for this ticket exceeds the fine amount")
+            return 0
         
         conn.commit()
         
@@ -228,18 +230,23 @@ class reg_agent:
         
         result = c.fetchall()
         
-        assert result != [], "New owner does not exist"
+        if result == []:
+            print("New owner does not exist")
+            return 0
         
         conn.commit()
         c.execute(''' SELECT fname,lname,regno FROM registrations WHERE vin = ? COLLATE NOCASE AND julianday(expiry) >= julianday(CURRENT_DATE); ''', (vin,))
         
        
         result = c.fetchall()
+        print(result)
         result_fname = result [0][0]
         result_lname = result [0][1]
         result_regno = result [0][2]
         
-        assert result_fname == curr_owner_fname and result_lname == curr_owner_lname, "The current owner for this car in our database is different from what was mentioned"
+        if not (result_fname == curr_owner_fname and result_lname == curr_owner_lname):
+            print("The current owner for this car in our database is different from what was mentioned")
+            return 0
         
         conn.commit()
         
@@ -247,10 +254,10 @@ class reg_agent:
         
         c.execute(''' UPDATE registrations SET expiry = ? WHERE regno = ? ''', (today,result_regno))     
         
+        c.execute(''' SELECT count(*) from registrations; ''')
+        registration_regno = c.fetchone()[0]
         
-        c.execute(''' INSERT into registrations values (?,?,date('now','+1 year'),?,?,?,?);''',(self.registration_regno, today,plate_no,vin,new_owner_fname,new_owner_lname))
-        
-        self.registration_regno += 1
+        c.execute(''' INSERT into registrations values (?,?,date('now','+1 year'),?,?,?,?);''',(registration_regno, today,plate_no,vin,new_owner_fname,new_owner_lname))
         
         conn.commit()
         conn.close()
@@ -261,12 +268,14 @@ class reg_agent:
         c = conn.cursor()
         c.execute(''' SELECT expiry FROM registrations WHERE regno= ? COLLATE NOCASE; ''',(Num_Reg,))
        
-        result = c.fetchall() 
+        result = c.fetchone() 
         Actual_date = date.today()
         
-        assert result != None, "Wrong Registration Number"
+        if result == None:
+            print("Wrong Registration Number")
+            return 0
   
-        C_expiry = result[0][0]
+        C_expiry = result[0]
     
         C_expiry = C_expiry.split('-')
         C_expiry_datetime = datetime(int(C_expiry[0]),int(C_expiry[1]),int(C_expiry[2]))
